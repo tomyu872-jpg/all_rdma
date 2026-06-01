@@ -1,0 +1,196 @@
+Single stepping until exit from function _ZN3ns36RdmaHw16ReceiverCheckSeqEjNS_3PtrINS_15RdmaRxQueuePairEEEjRb@plt,
+which has no line number information.
+0x00007f4873729df0 in ?? () from /root/ns-3.19/build/libns3.19-point-to-point-optimized.so
+Cannot find bounds of current function
+Cannot find bounds of current function
+Continuing.
+
+Breakpoint 1, ns3::RdmaHw::ReceiverCheckSeq (this=0x55f76b5e2f50, seq=0, q=..., size=100, cnp=@0x7ffc598af5e7: false) at ../src/point-to-point/model/rdma-hw.cc:600
+600	int RdmaHw::ReceiverCheckSeq(uint32_t seq, Ptr<RdmaRxQueuePair> q, uint32_t size, bool &cnp) {
+601	    uint32_t expected = q->ReceiverNextExpectedSeq;
+602	    if (seq == expected || (seq < expected && seq + size >= expected)) {
+603	        if (m_irn) {
+604	            if (q->m_milestone_rx < seq + size) q->m_milestone_rx = seq + size;
+605	            q->ReceiverNextExpectedSeq += size - (expected - seq);
+608	                if (q->m_irn_sack_.peekFrontBlock(&sack_seq, &sack_len)) {
+614	            size_t progress = q->m_irn_sack_.discardUpTo(q->ReceiverNextExpectedSeq);
+615	            if (q->m_irn_sack_.IsEmpty()) {
+ns3::RdmaHw::ReceiveUdp (this=0x55f76b5e2f50, p=..., ch=...) at ../src/point-to-point/model/rdma-hw.cc:328
+328	    int x = ReceiverCheckSeq(ch.udp.seq, rxQp, payload_size, cnp_check);
+330	    if (x == 1 || x == 2 || x == 6) {  // generate ACK or NACK
+331	        qbbHeader seqh;
+332	        seqh.SetSeq(rxQp->ReceiverNextExpectedSeq);
+333	        seqh.SetPG(ch.udp.pg);
+334	        seqh.SetSport(ch.udp.dport);
+335	        seqh.SetDport(ch.udp.sport);
+336	        seqh.SetIntHeader(ch.udp.ih);
+338	        if (m_irn) {
+339	            if (x == 2) {
+Continuing.
+
+Breakpoint 1, 0x00007f487372cc20 in ns3::RdmaHw::ReceiverCheckSeq(unsigned int, ns3::Ptr<ns3::RdmaRxQueuePair>, unsigned int, bool&)@plt () from /root/ns-3.19/build/libns3.19-point-to-point-optimized.so
+Single stepping until exit from function _ZN3ns36RdmaHw16ReceiverCheckSeqEjNS_3PtrINS_15RdmaRxQueuePairEEEjRb@plt,
+which has no line number information.
+
+Breakpoint 1, ns3::RdmaHw::ReceiverCheckSeq (this=0x55f76b5e2f50, seq=100, q=..., size=100, cnp=@0x7ffc598af5e7: false) at ../src/point-to-point/model/rdma-hw.cc:600
+600	int RdmaHw::ReceiverCheckSeq(uint32_t seq, Ptr<RdmaRxQueuePair> q, uint32_t size, bool &cnp) {
+601	    uint32_t expected = q->ReceiverNextExpectedSeq;
+602	    if (seq == expected || (seq < expected && seq + size >= expected)) {
+603	        if (m_irn) {
+604	            if (q->m_milestone_rx < seq + size) q->m_milestone_rx = seq + size;
+605	            q->ReceiverNextExpectedSeq += size - (expected - seq);
+608	                if (q->m_irn_sack_.peekFrontBlock(&sack_seq, &sack_len)) {
+614	            size_t progress = q->m_irn_sack_.discardUpTo(q->ReceiverNextExpectedSeq);
+615	            if (q->m_irn_sack_.IsEmpty()) {
+ns3::RdmaHw::ReceiveUdp (this=0x55f76b5e2f50, p=..., ch=...) at ../src/point-to-point/model/rdma-hw.cc:328
+328	    int x = ReceiverCheckSeq(ch.udp.seq, rxQp, payload_size, cnp_check);
+330	    if (x == 1 || x == 2 || x == 6) {  // generate ACK or NACK
+331	        qbbHeader seqh;
+332	        seqh.SetSeq(rxQp->ReceiverNextExpectedSeq);
+333	        seqh.SetPG(ch.udp.pg);
+334	        seqh.SetSport(ch.udp.dport);
+335	        seqh.SetDport(ch.udp.sport);
+336	        seqh.SetIntHeader(ch.udp.ih);
+338	        if (m_irn) {
+339	            if (x == 2) {
+343	                seqh.SetIrnNack(0);  // NACK without ackSyndrome (ACK) in loss recovery mode
+344	                seqh.SetIrnNackSize(0);
+348	        if (ecnbits || cnp_check) {  // NACK accompanies with CNP packet
+356	        Ptr<Packet> newp =
+358	        newp->AddHeader(seqh);
+360	        Ipv4Header head;  // Prepare IPv4 header
+361	        head.SetDestination(Ipv4Address(ch.sip));
+362	        head.SetSource(Ipv4Address(ch.dip));
+363	        head.SetProtocol(x == 1 ? 0xFC : 0xFD);  // ack=0xFC nack=0xFD
+364	        head.SetTtl(64);
+365	        head.SetPayloadSize(newp->GetSize());
+366	        head.SetIdentification(rxQp->m_ipid++);
+369	            FlowIDNUMTag fit;
+370	            if (p->PeekPacketTag(fit)) {
+371	                newp->AddPacketTag(fit);
+369	            FlowIDNUMTag fit;
+375	        newp->AddHeader(head);
+376	        AddHeader(newp, 0x800);  // Attach PPP header
+101	  inline void Ref (void) const
+376	        AddHeader(newp, 0x800);  // Attach PPP header
+379	        uint32_t nic_idx = GetNicIdxOfRxQp(rxQp);
+379	        uint32_t nic_idx = GetNicIdxOfRxQp(rxQp);
+1040	      operator[](size_type __n) _GLIBCXX_NOEXCEPT
+380	        m_nic[nic_idx].dev->RdmaEnqueueHighPrioQ(newp);
+101	  inline void Ref (void) const
+380	        m_nic[nic_idx].dev->RdmaEnqueueHighPrioQ(newp);
+1040	      operator[](size_type __n) _GLIBCXX_NOEXCEPT
+360	        Ipv4Header head;  // Prepare IPv4 header
+357	            Create<Packet>(std::max(60 - 14 - 20 - (int)seqh.GetSerializedSize(), 0));
+299	        GetRxQp(ch.dip, ch.sip, ch.udp.dport, ch.udp.sport, ch.udp.pg, true);
+ns3::RdmaHw::Receive (this=<optimized out>, p=..., ch=...) at ../src/point-to-point/model/rdma-hw.cc:579
+579	        return ReceiveUdp(p, ch);
+ns3::MemPtrCallbackImpl<ns3::RdmaHw*, int (ns3::RdmaHw::*)(ns3::Ptr<ns3::Packet>, ns3::CustomHeader&), int, ns3::Ptr<ns3::Packet>, ns3::CustomHeader&, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty>::operator() (this=<optimized out>, a1=..., a2=...) at ./ns3/callback.h:360
+360	    return ((CallbackTraits<OBJ_PTR>::GetReference (m_objPtr)).*m_memPtr)(a1, a2);
+ns3::Callback<int, ns3::Ptr<ns3::Packet>, ns3::CustomHeader&, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty, ns3::empty>::operator() (a2=..., a1=..., this=<optimized out>) at ./ns3/callback.h:1043
+1043	    return (*(DoPeekImpl ()))(a1,a2);
+ns3::QbbNetDevice::Receive (this=0x55f76b5a6970, packet=...) at ../src/point-to-point/model/qbb-net-device.cc:390
+390	            int ret = m_rdmaReceiveCb(packet, ch);
+392	            if (ret == 0) DoMpiReceive(packet);
+392	            if (ret == 0) DoMpiReceive(packet);
+366	    CustomHeader ch(CustomHeader::L2_Header | CustomHeader::L3_Header | CustomHeader::L4_Header);
+ns3::MakeEvent<void (ns3::QbbNetDevice::*)(ns3::Ptr<ns3::Packet>), ns3::Ptr<ns3::QbbNetDevice>, ns3::Ptr<ns3::Packet> >(void (ns3::QbbNetDevice::*)(ns3::Ptr<ns3::Packet>), ns3::Ptr<ns3::QbbNetDevice>, ns3::Ptr<ns3::Packet>)::EventMemberImpl1::Notify() (this=<optimized out>) at ./ns3/make-event.h:124
+124	      (EventMemberImplObjTraits<OBJ>::GetReference (m_obj).*m_function)(m_a1);
+ns3::DefaultSimulatorImpl::ProcessOneEvent (this=0x55f76a13ac10) at ../src/core/model/default-simulator-impl.cc:143
+143	  next.impl->Unref ();
+145	  ProcessEventsWithContext ();
+0x00007f4872da4000 in ns3::DefaultSimulatorImpl::ProcessEventsWithContext()@plt () from /root/ns-3.19/build/libns3.19-core-optimized.so
+Single stepping until exit from function _ZN3ns320DefaultSimulatorImpl24ProcessEventsWithContextEv@plt,
+which has no line number information.
+ns3::DefaultSimulatorImpl::ProcessEventsWithContext (this=0x55f76a13ac10) at ../src/core/model/default-simulator-impl.cc:156
+156	{
+157	  if (m_eventsWithContextEmpty)
+ns3::DefaultSimulatorImpl::Run (this=0x55f76a13ac10) at ../src/core/model/default-simulator-impl.cc:197
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+199	      ProcessOneEvent ();
+197	  while (!m_events->IsEmpty () && !m_stop) 
+main (argc=<optimized out>, argv=<optimized out>) at ../scratch/network-load-balance.cc:1800
+1800	    Simulator::Destroy();
+1803	    endt = clock();
+220	      operator<<(double __f)
+1366	    std::map<std::string, uint32_t> topo2bdpMap;
+1205	    std::vector<std::pair<uint32_t, uint32_t>> link_pairs;  // src, dst link pairs
+89	      ~new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+1157	    std::vector<uint32_t> node_type(node_num, 0);
+89	      ~new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+__libc_start_main (main=0x55f730df4da0 <main(int, char**)>, argc=2, argv=0x7ffc598b0158, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7ffc598b0148) at ../csu/libc-start.c:342
+342	../csu/libc-start.c: No such file or directory.
+[Inferior 1 (process 7745) exited normally]
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+The program is not being run.
+Starting program: /root/ns-3.19/build/scratch/network-load-balance mix/output/1/config.txt
+warning: Error disabling address space randomization: Operation not permitted
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, 0x00007f8fb525cc20 in ns3::RdmaHw::ReceiverCheckSeq(unsigned int, ns3::Ptr<ns3::RdmaRxQueuePair>, unsigned int, bool&)@plt () from /root/ns-3.19/build/libns3.19-point-to-point-optimized.so
+Program not restarted.
+Quit
